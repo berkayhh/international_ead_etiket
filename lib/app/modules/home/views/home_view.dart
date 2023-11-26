@@ -28,20 +28,24 @@ class HomeView extends GetView<HomeController> {
                           Get.defaultDialog(
                             //Ask how much the user need , quantity
                             title: 'Quantity',
-                            content: TextFormField(
-                              controller: controller.quantity,
-                              decoration: const InputDecoration(
-                                labelText: 'Quantity',
-                              ),
+                            content: Column(
+                              children: [
+                                TextFormField(
+                                  controller: controller.quantity,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Quantity',
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    controller.printEtiket(
+                                        controller.produkte[index].id,
+                                        int.parse(controller.quantity.text));
+                                  },
+                                  child: const Text('Print'),
+                                )
+                              ],
                             ),
-                          );
-                          ElevatedButton(
-                            onPressed: () {
-                              controller.printEtiket(
-                                  controller.produkte[index].id,
-                                  int.parse(controller.quantity.text));
-                            },
-                            child: const Text('Print'),
                           );
                         },
                         icon: const Icon(Icons.print),
