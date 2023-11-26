@@ -36,11 +36,12 @@ class AddProductView extends GetView<HomeController> {
             ElevatedButton(
               onPressed: () {
                 controller.addProdukt(Etikett(
-                    id: 1,
-                    name: controller.name.text,
-                    description: controller.description.text,
-                    firma: controller.firma.value,
-                    layoutrechts: 'Layoutrechts'));
+                  id: controller.produkte.length + 1,
+                  name: controller.name.text,
+                  description: controller.description.text,
+                  firma: controller.firma.value,
+                  layoutrechts: controller.layoutrechts.text,
+                ));
               },
               child: const Text('Add'),
             ),

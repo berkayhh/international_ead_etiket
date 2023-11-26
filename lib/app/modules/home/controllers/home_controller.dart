@@ -37,8 +37,6 @@ class HomeController extends GetxController {
   }
 
   getProdukte() {
-    print('getProdukte');
-    print(depo.read('produkte'));
     var get = depo.read('produkte');
     if (get != null) {
       produkte.addAll((get as List).map((e) => Etikett.fromJson(e)).toList());
@@ -52,31 +50,85 @@ class HomeController extends GetxController {
     final doc = pw.Document();
 
     doc.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a6,
-        orientation: pw.PageOrientation.landscape,
-        build: (pw.Context context) {
-          return pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-              children: [
-                pw.SizedBox(
-                  width: PdfPageFormat.a6.width / 2,
-                  child: pw.Column(children: [
-                    pw.Text(etikett.name),
-                    pw.Text(etikett.description),
-                  ]),
+      pageFormat: PdfPageFormat.a6,
+      orientation: pw.PageOrientation.landscape,
+      build: (pw.Context context) {
+        print(etikett.name);
+        print(etikett.description);
+
+        return pw.Container(
+          height: PdfPageFormat.a6.availableHeight,
+          width: PdfPageFormat.a6.availableWidth,
+          child: pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Row(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Expanded(
+                    flex: 3,
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          etikett.name,
+                          textAlign: pw.TextAlign.left,
+                          style: pw.TextStyle(fontSize: 9),
+                        ),
+                        pw.Text(
+                          etikett.description,
+                          textAlign: pw.TextAlign.left,
+                          style: pw.TextStyle(fontSize: 7),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.Expanded(
+                    flex: 2,
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          etikett.layoutrechts,
+                          textAlign: pw.TextAlign.left,
+                          style: pw.TextStyle(fontSize: 7),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 10),
+              pw.Align(
+                alignment: pw.Alignment.center,
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      "Mindestens haltbar bis: Siehe Verpackung",
+                      textAlign: pw.TextAlign.center,
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                    pw.Text(
+                      "Importeur: " + etikett.firma,
+                      textAlign: pw.TextAlign.left,
+                      style: pw.TextStyle(fontSize: 5),
+                    ),
+                  ],
                 ),
-                pw.SizedBox(
-                  width: PdfPageFormat.a6.width / 2,
-                  child: pw.Column(children: [
-                    pw.Text(etikett.layoutrechts),
-                  ]),
-                ),
-              ]); // Center
-        }));
+              ),
+            ],
+          ),
+        );
+      },
+    ));
 
     Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => doc.save(),
-        name: 'my_etikett.pdf');
+        usePrinterSettings: true,
+        format: PdfPageFormat.a6,
+        name: 'etikett.pdf');
   }
 
   @override

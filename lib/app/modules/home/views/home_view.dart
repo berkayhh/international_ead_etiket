@@ -21,8 +21,70 @@ class HomeView extends GetView<HomeController> {
                   itemCount: controller.produkte.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(controller.produkte[index].name),
+                      title: Text(controller.produkte[index].id.toString() +
+                          "-" +
+                          controller.produkte[index].name),
                       subtitle: Text(controller.produkte[index].description),
+                      onTap: () {
+                        Get.defaultDialog(
+                          title: 'Edit',
+                          content: Column(
+                            children: [
+                              TextFormField(
+                                controller: controller.name,
+                                decoration: const InputDecoration(
+                                  labelText: 'Name',
+                                ),
+                              ),
+                              TextFormField(
+                                controller: controller.description,
+                                decoration: const InputDecoration(
+                                  labelText: 'Description',
+                                ),
+                              ),
+                              TextFormField(
+                                controller: controller.layoutrechts,
+                                decoration: const InputDecoration(
+                                  labelText: 'Layoutrechts',
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  controller.editProduct(Etikett(
+                                    id: controller.produkte[index].id,
+                                    name: controller.name.text,
+                                    description: controller.description.text,
+                                    firma: controller.firma.value,
+                                    layoutrechts: controller.layoutrechts.text,
+                                  ));
+                                },
+                                child: const Text('Edit'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      onLongPress: () {
+                        Get.defaultDialog(
+                          title: 'Delete',
+                          content: Column(
+                            children: [
+                              Text(controller.produkte[index].id.toString() +
+                                  "-" +
+                                  controller.produkte[index].name),
+                              Text(controller.produkte[index].description),
+                              ElevatedButton(
+                                onPressed: () {
+                                  controller.removeProdukt(
+                                      controller.produkte[index]);
+                                  Get.back();
+                                },
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                       trailing: IconButton(
                         onPressed: () {
                           Get.defaultDialog(
