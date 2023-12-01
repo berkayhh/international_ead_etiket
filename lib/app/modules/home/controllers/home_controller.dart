@@ -14,26 +14,24 @@ class HomeController extends GetxController {
   TextEditingController layoutrechts = TextEditingController();
   TextEditingController quantity = TextEditingController();
   var firma = 'International Trading EAD'.obs;
+
   void addProdukt(Etikett etikett) {
     produkte.add(etikett);
-    depo.write(
-        'produkte',
-        produkte
-            .map((e) => e.toJson())
-            .toList()); // Tüm ürünleri JSON formatına dönüştür ve kaydet
+    depo.write('produkte', produkte.map((e) => e.toJson()).toList());
     Get.back();
   }
 
   void removeProdukt(Etikett etikett) {
     produkte.remove(etikett);
-    var save = produkte.toJson();
-    depo.write('produkte', save);
+    depo.write('produkte', produkte.map((e) => e.toJson()).toList());
   }
 
   void editProduct(Etikett etikett) {
-    produkte.add(etikett);
-    var save = produkte.toJson();
-    depo.write('produkte', save);
+    var index = produkte.indexWhere((element) => element.id == etikett.id);
+    if (index != -1) {
+      produkte[index] = etikett;
+      depo.write('produkte', produkte.map((e) => e.toJson()).toList());
+    }
   }
 
   getProdukte() {
@@ -49,85 +47,38 @@ class HomeController extends GetxController {
 
     final doc = pw.Document();
 
-    doc.addPage(pw.Page(
-      pageFormat: PdfPageFormat.a6,
-      orientation: pw.PageOrientation.landscape,
-      build: (pw.Context context) {
-        print(etikett.name);
-        print(etikett.description);
+    // 3.5x2 inç boyutunu tanımla (piksel cinsinden dönüşüm: 1 inç = 72 piksel)
+    const customPageFormat = PdfPageFormat(3.93 * 72, 1.96 * 72);
 
-        return pw.Container(
-          height: PdfPageFormat.a6.availableHeight,
-          width: PdfPageFormat.a6.availableWidth,
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Row(
-                crossAxisAlignment: pw.CrossAxisAlignment.start,
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Expanded(
-                    flex: 3,
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          etikett.name,
-                          textAlign: pw.TextAlign.left,
-                          style: pw.TextStyle(fontSize: 9),
-                        ),
-                        pw.Text(
-                          etikett.description,
-                          textAlign: pw.TextAlign.left,
-                          style: pw.TextStyle(fontSize: 7),
-                        ),
-                      ],
-                    ),
-                  ),
-                  pw.Expanded(
-                    flex: 2,
-                    child: pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
-                      children: [
-                        pw.Text(
-                          etikett.layoutrechts,
-                          textAlign: pw.TextAlign.left,
-                          style: pw.TextStyle(fontSize: 7),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              pw.SizedBox(height: 10),
-              pw.Align(
-                alignment: pw.Alignment.center,
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      "Mindestens haltbar bis: Siehe Verpackung",
-                      textAlign: pw.TextAlign.center,
-                      style: pw.TextStyle(fontSize: 5),
-                    ),
-                    pw.Text(
-                      "Importeur: " + etikett.firma,
-                      textAlign: pw.TextAlign.left,
-                      style: pw.TextStyle(fontSize: 5),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    ));
+    for (int i = 0; i < quantity; i++) {
+      doc.addPage(pw.Page(
+        pageFormat: customPageFormat,
+        build: (pw.Context context) {
+          return pw.Container(
+            height: customPageFormat.availableHeight,
+            width: customPageFormat.availableWidth,
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Etiket içeriğini burada düzenleyin
+                pw.Text(etikett.name, style: pw.TextStyle(fontSize: 20)),
+                pw.Text(etikett.description, style: pw.TextStyle(fontSize: 16)),
+                pw.Text('Layoutrechts: ${etikett.layoutrechts}',
+                    style: pw.TextStyle(fontSize: 16)),
+                pw.Text('Firma: ${etikett.firma}',
+                    style: pw.TextStyle(fontSize: 16)),
+                // Daha fazla içerik eklenebilir
+              ],
+            ),
+          );
+        },
+      ));
+    }
 
     Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => doc.save(),
         usePrinterSettings: true,
-        format: PdfPageFormat.a6,
+        format: customPageFormat,
         name: 'etikett.pdf');
   }
 
@@ -163,7 +114,6 @@ class Etikett {
     required this.layoutrechts,
   });
 
-  // JSON formatına dönüştürme işlevi
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -174,7 +124,6 @@ class Etikett {
     };
   }
 
-  // JSON'dan nesneyi oluşturma işlevi
   factory Etikett.fromJson(Map<String, dynamic> json) {
     return Etikett(
       id: json['id'],
