@@ -15,6 +15,11 @@ class HomeView extends GetView<HomeController> {
         body: SafeArea(
             child: Column(
           children: [
+            /*          ElevatedButton(
+                onPressed: () {
+                  controller.printx();
+                },
+                child: Text("TEST")), */
             Expanded(
               child: Obx(
                 () => ListView.builder(
@@ -100,7 +105,7 @@ class HomeView extends GetView<HomeController> {
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
-                                    controller.printEtiket(
+                                    controller.printx(
                                         controller.produkte[index].id,
                                         int.parse(controller.quantity.text));
                                   },
