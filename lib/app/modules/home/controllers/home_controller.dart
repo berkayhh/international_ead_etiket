@@ -1,9 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
 import 'dart:io';
-import 'dart:convert';
 
 class HomeController extends GetxController {
   var depo = GetStorage();
@@ -13,7 +11,66 @@ class HomeController extends GetxController {
   TextEditingController description = TextEditingController();
   TextEditingController layoutrechts = TextEditingController();
   TextEditingController quantity = TextEditingController();
-  var firma = 'International Trading EAD'.obs;
+
+  TextEditingController firmaController = TextEditingController();
+  TextEditingController firmaAdresseController = TextEditingController();
+  TextEditingController bottomlayout1Controller = TextEditingController();
+  TextEditingController bottomlayout2Controller = TextEditingController();
+  TextEditingController ipAdressController = TextEditingController();
+  TextEditingController portController = TextEditingController();
+  var firma = ''.obs;
+  var firmaAdresse = ''.obs;
+  var bottomlayout1 = ''.obs;
+  var bottomlayout2 = ''.obs;
+
+  String fontSizeTitel = '34,17';
+  String fontSizeDescription = '26,14';
+  String fontSizeLayout = '26,13';
+
+  var ipAdress = "".obs;
+  var port = 9100.obs;
+
+  void getDatas() {
+    depo.writeIfNull("firma", "");
+    depo.writeIfNull("firmaAdresse", "");
+    depo.writeIfNull("bottomlayout1 ", "");
+    depo.writeIfNull("bottomlayout2 ", "");
+    firma.value = depo.read("firma");
+    firmaAdresse.value = depo.read("firmaAdresse");
+    bottomlayout1.value = depo.read("bottomlayout1");
+    bottomlayout2.value = depo.read("bottomlayout2");
+    firmaController.text = firma.value;
+    firmaAdresseController.text = firmaAdresse.value;
+    bottomlayout1Controller.text = bottomlayout1.value;
+    bottomlayout2Controller.text = bottomlayout2.value;
+    depo.writeIfNull("ipAdress", "192.168.xxx.xxx");
+    depo.writeIfNull("port", 9100);
+
+    ipAdress.value = depo.read("ipAdress");
+    print("IP ADRESS: " + ipAdress.value.toString());
+    print("PORT: " + port.value.toString());
+    port.value = depo.read("port");
+    ipAdressController.text = ipAdress.value;
+    portController.text = port.value.toString();
+
+    update();
+  }
+
+  void setDatas(String comefirma, String comeFirmaAdresse,
+      String comeBottomlayout1, String comeBottomlayout2) {
+    depo.write("firma", comefirma);
+    depo.write("firmaAdresse", comeFirmaAdresse);
+    depo.write("bottomlayout1", comeBottomlayout1);
+    depo.write("bottomlayout2", comeBottomlayout2);
+    update();
+  }
+
+  void setIPAdress(String comeIPAdress, int comePort) {
+    depo.write("ipAdress", comeIPAdress);
+    depo.write("port", comePort);
+
+    update();
+  }
 
   void addProdukt(Etikett etikett) {
     produkte.add(etikett);
@@ -41,75 +98,57 @@ class HomeController extends GetxController {
     }
   }
 
-/*   Future<void> printEtiket(int id, int quantity) async {
-    Get.back();
-    var etikett = produkte.firstWhere((element) => element.id == id);
-
-    // 3.5x2 inç boyutunu tanımla (piksel cinsinden dönüşüm: 1 inç = 72 piksel)
-    //Etiket Büyüklügü 4.9x7.4 cm
-
-    final pdf = pw.Document();
-
-    // Özel etiket boyutlarını tanımlayın
-    const PdfPageFormat labelFormat = PdfPageFormat(
-      7.4 * PdfPageFormat.cm, // genişlik 7.4 cm
-      4.9 * PdfPageFormat.cm, // yükseklik 4.9 cm
-      marginTop: 0,
-      marginLeft: 0,
-      marginRight: 0,
-      marginBottom: 0,
-    );
-
-    pdf.addPage(
-      pw.Page(
-        pageFormat: labelFormat,
-        build: (pw.Context context) {
-          return pw.Container(
-            child: pw.Stack(
-              children: [
-                // Sol Üst Köşe
-                pw.Positioned(
-                  left: 0,
-                  top: 0,
-                  child: pw.Text('1', style: pw.TextStyle(fontSize: 12)),
-                ),
-                // Sağ Üst Köşe
-                pw.Positioned(
-                  right: 0,
-                  top: 0,
-                  child: pw.Text('2', style: pw.TextStyle(fontSize: 12)),
-                ),
-                // Sol Alt Köşe
-                pw.Positioned(
-                  left: 0,
-                  bottom: 0,
-                  child: pw.Text('3', style: pw.TextStyle(fontSize: 12)),
-                ),
-                // Sağ Alt Köşe
-                pw.Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: pw.Text('4', style: pw.TextStyle(fontSize: 12)),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-
-    // PDF'i kaydedebilir veya yazdırabilirsiniz.
-    // Örneğin, cihazda bir dosya olarak kaydetmek için:
-
-    // Yazdırmak için:
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf.save(),
-    );
-  } */
   void printx(int id, int quantity) async {
     Get.back();
     var etikett = produkte.firstWhere((element) => element.id == id);
+
+    print("Etiket name: " + etikett.name.length.toString());
+    print("ETIKET DESC:" + etikett.description.length.toString());
+    print("ETIKET LAYOUTR:" + etikett.layoutrechts.length.toString());
+
     String label = '';
+
+    if (etikett.name.length > 26) {
+      fontSizeTitel = '28,14';
+    } else if (etikett.name.length <= 25) {
+      fontSizeTitel = '40,20';
+    } else if (etikett.name.length > 35) {
+      fontSizeTitel = ' 22,11';
+    } else if (etikett.name.length > 40) {
+      fontSizeTitel = '20,10';
+    } else if (etikett.name.length > 50) {
+      fontSizeTitel = '18,9';
+    } else if (etikett.name.length > 60) {
+      Get.snackbar("Error", "Maximal 60 Chracter erlaubt,Bitte kürzen Sie es");
+    }
+
+    if (etikett.description.length < 450) {
+      fontSizeDescription = '28,14';
+    } else if (etikett.description.length >= 450) {
+      fontSizeDescription = '26,13';
+    } else if (etikett.description.length > 600) {
+      fontSizeDescription = '24,12';
+    } else if (etikett.description.length > 700) {
+      fontSizeDescription = '22,11';
+    } else if (etikett.description.length > 800) {
+      fontSizeDescription = '20,10';
+    } else if (etikett.description.length > 900) {
+      Get.snackbar("Error", "Maximal 900 Chracter erlaubt,Bitte kürzen Sie es");
+    }
+
+    if (etikett.layoutrechts.length < 200) {
+      fontSizeLayout = '28,14';
+    } else if (etikett.layoutrechts.length >= 200) {
+      fontSizeLayout = '26,13';
+    } else if (etikett.layoutrechts.length > 300) {
+      fontSizeLayout = '24,12';
+    } else if (etikett.layoutrechts.length > 400) {
+      fontSizeLayout = '22,11';
+    } else if (etikett.layoutrechts.length > 500) {
+      fontSizeLayout = '20,10';
+    } else if (etikett.layoutrechts.length > 900) {
+      Get.snackbar("Error", "Maximal 900 Chracter erlaubt,Bitte kürzen Sie es");
+    }
 
     label += '^CI28'; // UTF-8 karakter setine geçiş için SBPL komutu
 
@@ -118,42 +157,37 @@ class HomeController extends GetxController {
     label += '^LL0588'; // Etiket uzunluğu yaklaşık 588 nokta (yaklaşık 4.9 cm)
     label += '^PW0888'; // Etiket genişliği yaklaşık 888 nokta (yaklaşık 7.4 cm)
 
-// Başlık için 1 mm yukarıda boşluk bırakarak ve fontu %20 küçültme
+// Başlık için 1 mm yukarıda boşluk bırakarak ve fontu %20 daha büyük yapma
     label +=
-        '^FO12,12^ADN,28,14^FD ${etikett.name}^FS'; // ETIKET Baslik, 12 nokta yukarıda başlayarak
+        '^FO12,12^ADN,$fontSizeTitel^FD ${etikett.name}^FS'; // ETIKET Baslik, 12 nokta yukarıda başlayarak
 
     int dividerStart =
         530; // Sol taraf genişliği, etiket genişliğinin yaklaşık %60'ı
-    int headerHeight = 42; // Başlık yüksekliği ve 1 mm boşluk dahil
+    int headerHeight = 50; // Başlık yüksekliği ve 1 mm boşluk dahil
 
 // Sol taraf için metin yazdırma, başlığın altından ve 1 mm boşluk bırakarak
     label +=
-        '^FO12,${headerHeight + 24}^ADN,26,14^FB518,25,,^FD ${etikett.description}^FS'; // ETIKET Açıklama, 25 satıra kadar
+        '^FO12,${headerHeight + 24}^ADN,$fontSizeDescription^FB518,25,,^FD ${etikett.description}^FS'; // ETIKET Açıklama, 25 satıra kadar, %20 daha büyük font
 
 // Sağ taraf için metin alanını genişletme, başlığın altından ve 1 mm boşluk bırakarak
     label +=
-        '^FO${dividerStart + 14},${headerHeight + 12}^ADN,26,14^FB346,25,,^FD ${etikett.layoutrechts}^FS'; // ACIKLAMA, 25 satıra kadar
+        '^FO${dividerStart + 14},${headerHeight + 12}^ADN,$fontSizeLayout^FB346,25,,^FD ${etikett.layoutrechts}^FS'; // ACIKLAMA, 25 satıra kadar, %20 daha büyük font
 
 // Alt metinler, 1 mm boşluk bırakarak
     int bottomTextStart =
         512; // Alt metinlerin başlangıç noktası, 12 nokta aşağıda
-    label +=
-        '^FO12,${bottomTextStart}^ADN,18,10^FDImportiert von: International Traiding EAD GmbH, Alter Teichweg 11-13^FS';
-    label += '^FO12,${bottomTextStart + 20}^ADN,18,10^FD22081 Hamburg^FS';
-    label +=
-        '^FO12,${bottomTextStart + 40}^ADN,18,10^FDHinweise: Kühl und trocken Lagern, vor Wärme schützen^FS';
-    label +=
-        '^FO12,${bottomTextStart + 60}^ADN,18,10^FDMindestens haltbar bis: Siehe Verpackung^FS';
-
+    label += '^FO12,$bottomTextStart^ADN,24,12^FD$firma^FS';
+    label += '^FO12,${bottomTextStart + 20}^ADN,20,10^FD$firmaAdresse^FS';
+    label += '^FO12,${bottomTextStart + 40}^ADN,20,10^FD$bottomlayout1^FS';
+    label += '^FO12,${bottomTextStart + 60}^ADN,20,10^FD$bottomlayout2^FS';
+//Importiert von: International Traiding EAD GmbH, Alter Teichweg 11-13 22081 Hamburg
+//Hinweise: Kühl und trocken Lagern, vor Wärme schützen
+//Mindestens haltbar bis: Siehe Verpackung
 // Etiket sonu
     label += '^XZ';
 
-    // Yazıcı IP adresi ve portu
-    var host = '192.168.150.91';
-    var port = 9100; // Genellikle 9100
-
     // TCP soketi oluştur ve yazıcıya bağlan
-    var socket = await Socket.connect(host, port);
+    var socket = await Socket.connect(ipAdress.value, port.value);
     print('Printer Connected');
 
     // Etiketi yazdır
@@ -176,6 +210,9 @@ class HomeController extends GetxController {
   Future<void> onReady() async {
     super.onReady();
     await getProdukte();
+    getDatas();
+    update();
+    print(produkte.length);
   }
 
   @override

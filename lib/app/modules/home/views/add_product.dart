@@ -13,39 +13,42 @@ class AddProductView extends GetView<HomeController> {
           centerTitle: true,
         ),
         body: SafeArea(
-            child: Column(
-          children: [
-            TextFormField(
-              controller: controller.name,
-              decoration: const InputDecoration(
-                labelText: 'Name',
+            child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: controller.name,
+                decoration: const InputDecoration(
+                  labelText: 'Produkt Name',
+                ),
               ),
-            ),
-            TextFormField(
-              controller: controller.description,
-              decoration: const InputDecoration(
-                labelText: 'Description',
+              TextFormField(
+                controller: controller.description,
+                decoration: const InputDecoration(
+                  labelText: 'Beschriebung',
+                ),
               ),
-            ),
-            TextFormField(
-              controller: controller.layoutrechts,
-              decoration: const InputDecoration(
-                labelText: 'Layoutrechts',
+              TextFormField(
+                controller: controller.layoutrechts,
+                decoration: const InputDecoration(
+                  labelText: 'Nährungswerte',
+                ),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                controller.addProdukt(Etikett(
-                  id: controller.produkte.length + 1,
-                  name: controller.name.text,
-                  description: controller.description.text,
-                  firma: controller.firma.value,
-                  layoutrechts: controller.layoutrechts.text,
-                ));
-              },
-              child: const Text('Add'),
-            ),
-          ],
+              ElevatedButton(
+                onPressed: () {
+                  controller.addProdukt(Etikett(
+                    id: controller.produkte.length + 1,
+                    name: controller.name.text,
+                    description: controller.description.text,
+                    firma: controller.firma.value,
+                    layoutrechts: controller.layoutrechts.text,
+                  ));
+                },
+                child: const Text('Add'),
+              ),
+            ],
+          ),
         )));
   }
 }

@@ -9,6 +9,7 @@ Future<void> main() async {
   await GetStorage.init();
   runApp(
     GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "Etiketten-EAD",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
