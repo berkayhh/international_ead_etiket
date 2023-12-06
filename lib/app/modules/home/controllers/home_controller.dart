@@ -6,6 +6,7 @@ import 'dart:io';
 class HomeController extends GetxController {
   var depo = GetStorage();
   var produkte = <Etikett>[].obs;
+  var counter = 0.obs;
 
   TextEditingController name = TextEditingController();
   TextEditingController description = TextEditingController();
@@ -56,6 +57,20 @@ class HomeController extends GetxController {
     update();
   }
 
+  void searchProdukt(String search) {
+    produkte.clear();
+    var get = depo.read('produkte');
+    if (get != null) {
+      produkte.addAll((get as List).map((e) => Etikett.fromJson(e)).toList());
+    }
+    produkte = produkte
+        .where((element) =>
+            element.name.toLowerCase().contains(search.toLowerCase()))
+        .toList()
+        .obs;
+    update();
+  }
+
   void setDatas(String comefirma, String comeFirmaAdresse,
       String comeBottomlayout1, String comeBottomlayout2) {
     depo.write("firma", comefirma);
@@ -72,10 +87,18 @@ class HomeController extends GetxController {
     update();
   }
 
+  void printCounter(int count) {
+    depo.write("counter", count);
+    update();
+  }
+
   void addProdukt(Etikett etikett) {
     produkte.add(etikett);
     depo.write('produkte', produkte.map((e) => e.toJson()).toList());
     Get.back();
+    name.clear();
+    description.clear();
+    layoutrechts.clear();
   }
 
   void removeProdukt(Etikett etikett) {
@@ -99,6 +122,7 @@ class HomeController extends GetxController {
   }
 
   void printx(int id, int quantity) async {
+    depo.write("counter", counter.value += quantity);
     Get.back();
     var etikett = produkte.firstWhere((element) => element.id == id);
 
@@ -204,6 +228,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    depo.writeIfNull("counter", 0);
   }
 
   @override
