@@ -19,6 +19,7 @@ class HomeController extends GetxController {
   TextEditingController bottomlayout2Controller = TextEditingController();
   TextEditingController ipAdressController = TextEditingController();
   TextEditingController portController = TextEditingController();
+  TextEditingController search = TextEditingController();
   var firma = ''.obs;
   var firmaAdresse = ''.obs;
   var bottomlayout1 = ''.obs;
@@ -77,6 +78,7 @@ class HomeController extends GetxController {
     depo.write("firmaAdresse", comeFirmaAdresse);
     depo.write("bottomlayout1", comeBottomlayout1);
     depo.write("bottomlayout2", comeBottomlayout2);
+    counter.value = depo.read("counter");
     update();
   }
 
@@ -88,6 +90,8 @@ class HomeController extends GetxController {
   }
 
   void printCounter(int count) {
+    counter.value = depo.read("counter");
+    counter.value += count;
     depo.write("counter", count);
     update();
   }
@@ -122,7 +126,7 @@ class HomeController extends GetxController {
   }
 
   void printx(int id, int quantity) async {
-    depo.write("counter", counter.value += quantity);
+    printCounter(quantity);
     Get.back();
     var etikett = produkte.firstWhere((element) => element.id == id);
 

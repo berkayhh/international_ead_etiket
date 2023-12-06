@@ -13,7 +13,7 @@ class HomeView extends GetView<HomeController> {
         title: const Text('International Trading EAD-Etiketten Drucker'),
         centerTitle: true,
         actions: [
-          Text(controller.counter.value.toString()),
+          Obx(() => Text(controller.counter.value.toString())),
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () {
@@ -32,7 +32,7 @@ class HomeView extends GetView<HomeController> {
         child: Column(
           children: [
             TextFormField(
-              controller: controller.firmaController,
+              controller: controller.search,
               decoration: const InputDecoration(
                 labelText: 'Produkt Suchen',
               ),
@@ -51,7 +51,6 @@ class HomeView extends GetView<HomeController> {
                     : ListView.builder(
                         itemCount: controller.produkte.length,
                         itemBuilder: (context, index) {
-                          print(controller.produkte.length);
                           if (controller.produkte.length <= 0) {
                           } else {
                             return Card(
@@ -91,10 +90,8 @@ class HomeView extends GetView<HomeController> {
                                     title: 'Delete',
                                     content: Column(
                                       children: [
-                                        Text(controller.produkte[index].id
-                                                .toString() +
-                                            "-" +
-                                            controller.produkte[index].name),
+                                        Text(
+                                            "${controller.produkte[index].id}-${controller.produkte[index].name}"),
                                         Text(controller
                                             .produkte[index].description),
                                         ElevatedButton(
