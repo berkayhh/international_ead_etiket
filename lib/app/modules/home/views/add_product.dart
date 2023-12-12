@@ -37,8 +37,9 @@ class AddProductView extends GetView<HomeController> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  int newId = controller.getUniqueProductId();
                   controller.addProdukt(Etikett(
-                    id: controller.produkte.length + 1,
+                    id: newId,
                     name: controller.name.text,
                     description: controller.description.text,
                     firma: controller.firma.value,

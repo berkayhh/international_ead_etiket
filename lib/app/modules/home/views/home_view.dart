@@ -51,7 +51,10 @@ class HomeView extends GetView<HomeController> {
                     : ListView.builder(
                         itemCount: controller.produkte.length,
                         itemBuilder: (context, index) {
-                          if (controller.produkte.length <= 0) {
+                          if (controller.produkte.isEmpty) {
+                            return const Center(
+                              child: Text("Keine Produkte vorhanden"),
+                            );
                           } else {
                             return Card(
                               child: ListTile(
@@ -108,6 +111,9 @@ class HomeView extends GetView<HomeController> {
                                 },
                                 trailing: IconButton(
                                   onPressed: () {
+                                    controller.etiketid.text = controller
+                                        .produkte[index].id
+                                        .toString();
                                     controller.name.text =
                                         controller.produkte[index].name;
                                     controller.description.text =
@@ -118,6 +124,12 @@ class HomeView extends GetView<HomeController> {
                                       title: 'Edit',
                                       content: Column(
                                         children: [
+                                          TextFormField(
+                                            controller: controller.etiketid,
+                                            decoration: const InputDecoration(
+                                              labelText: 'ID',
+                                            ),
+                                          ),
                                           TextFormField(
                                             controller: controller.name,
                                             decoration: const InputDecoration(
@@ -139,8 +151,8 @@ class HomeView extends GetView<HomeController> {
                                           ElevatedButton(
                                             onPressed: () {
                                               controller.editProduct(Etikett(
-                                                id: controller
-                                                    .produkte[index].id,
+                                                id: int.parse(
+                                                    controller.etiketid.text),
                                                 name: controller.name.text,
                                                 description:
                                                     controller.description.text,

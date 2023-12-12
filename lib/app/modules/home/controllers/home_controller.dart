@@ -12,6 +12,7 @@ class HomeController extends GetxController {
   TextEditingController description = TextEditingController();
   TextEditingController layoutrechts = TextEditingController();
   TextEditingController quantity = TextEditingController();
+  TextEditingController etiketid = TextEditingController();
 
   TextEditingController firmaController = TextEditingController();
   TextEditingController firmaAdresseController = TextEditingController();
@@ -89,10 +90,26 @@ class HomeController extends GetxController {
     update();
   }
 
-  void printCounter(int count) {
-    counter.value = depo.read("counter");
+  int getUniqueProductId() {
+    List<int> existingIds = produkte.map((e) => e.id).toList();
+    existingIds.sort();
+
+    int newId = 1;
+    for (int id in existingIds) {
+      if (newId < id) {
+        return newId;
+      }
+      newId = id + 1;
+    }
+    return newId;
+  }
+
+  Future<void> printCounter(int count) async {
+    print("Counter: " + depo.read("counter").toString());
+    counter.value = await depo.read("counter");
+    print("Counter: " + counter.value.toString());
     counter.value += count;
-    depo.write("counter", count);
+    await depo.write("counter", counter.value); // Bu satırı değiştirin
     update();
   }
 
