@@ -11,6 +11,7 @@ dependencies:
   flutter: 
     sdk: flutter
   get_storage: ^2.1.1
+  flutter_quill: ^9.2.2
 
 
 dev_dependencies: 

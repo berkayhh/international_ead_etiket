@@ -1,4 +1,6 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:io';
@@ -7,6 +9,9 @@ class HomeController extends GetxController {
   var depo = GetStorage();
   var produkte = <Etikett>[].obs;
   var counter = 0.obs;
+
+QuillController quillController = QuillController.basic();
+
 
   TextEditingController name = TextEditingController();
   TextEditingController description = TextEditingController();

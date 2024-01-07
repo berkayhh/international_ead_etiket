@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 
@@ -17,6 +19,31 @@ class AddProductView extends GetView<HomeController> {
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
+              QuillToolbar.simple(
+                configurations: QuillSimpleToolbarConfigurations(
+                  controller: controller.quillController,
+                  sharedConfigurations: const QuillSharedConfigurations(
+                    locale: Locale('de'),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: QuillEditor.basic(
+                  configurations: QuillEditorConfigurations(
+                    controller: controller.quillController,
+                    readOnly: false,
+                    sharedConfigurations: const QuillSharedConfigurations(
+                      locale: Locale('de'),
+                    ),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    print(
+                        controller.quillController.document.toDelta().toJson());
+                  },
+                  child: Text("Show Label Text")),
               TextFormField(
                 controller: controller.name,
                 decoration: const InputDecoration(
