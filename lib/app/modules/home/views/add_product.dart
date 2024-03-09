@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 
@@ -11,7 +10,7 @@ class AddProductView extends GetView<HomeController> {
     Get.put(HomeController());
     return Scaffold(
         appBar: AppBar(
-          title: const Text('International Trading EAD-Add Productr'),
+          title: const Text('International Trading EAD-Add Product'),
           centerTitle: true,
         ),
         body: SafeArea(
@@ -19,31 +18,6 @@ class AddProductView extends GetView<HomeController> {
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: [
-              QuillToolbar.simple(
-                configurations: QuillSimpleToolbarConfigurations(
-                  controller: controller.quillController,
-                  sharedConfigurations: const QuillSharedConfigurations(
-                    locale: Locale('de'),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: QuillEditor.basic(
-                  configurations: QuillEditorConfigurations(
-                    controller: controller.quillController,
-                    readOnly: false,
-                    sharedConfigurations: const QuillSharedConfigurations(
-                      locale: Locale('de'),
-                    ),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    print(
-                        controller.quillController.document.toDelta().toJson());
-                  },
-                  child: Text("Show Label Text")),
               TextFormField(
                 controller: controller.name,
                 decoration: const InputDecoration(
@@ -65,7 +39,7 @@ class AddProductView extends GetView<HomeController> {
               ElevatedButton(
                 onPressed: () {
                   int newId = controller.getUniqueProductId();
-                  controller.addProdukt(Etikett(
+                  controller.addSqlProdukt(Etikett(
                     id: newId,
                     name: controller.name.text,
                     description: controller.description.text,
@@ -75,6 +49,49 @@ class AddProductView extends GetView<HomeController> {
                 },
                 child: const Text('Add'),
               ),
+              /*   const SizedBox(
+                height: 20,
+              ),
+              const Text("Freie Text Ausgabe"),
+              SizedBox(
+                width: Get.width / 3,
+                child: TextFormField(
+                  controller: controller.freeTextCount,
+                  //Label
+                  decoration: InputDecoration(hintText: "Stück"),
+                ),
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    print(
+                        controller.quillController.document.toDelta().toJson());
+                    controller.printFreeText(
+                        controller.quillController.document
+                            .toDelta()
+                            .toJson()
+                            .toString(),
+                        int.parse(controller.freeTextCount.text));
+                  },
+                  child: const Text("Etiket Drucken")),
+              QuillToolbar.simple(
+                configurations: QuillSimpleToolbarConfigurations(
+                  controller: controller.quillController,
+                  sharedConfigurations: const QuillSharedConfigurations(
+                    locale: Locale('de'),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: QuillEditor.basic(
+                  configurations: QuillEditorConfigurations(
+                    controller: controller.quillController,
+                    readOnly: false,
+                    sharedConfigurations: const QuillSharedConfigurations(
+                      locale: Locale('de'),
+                    ),
+                  ),
+                ),
+              ), */
             ],
           ),
         )));

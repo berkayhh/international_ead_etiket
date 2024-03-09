@@ -1,18 +1,21 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:io';
+
+import 'package:international_ead_etiket/SQL.dart';
 
 class HomeController extends GetxController {
   var depo = GetStorage();
   var produkte = <Etikett>[].obs;
   var counter = 0.obs;
 
-QuillController quillController = QuillController.basic();
+  QuillController quillController = QuillController.basic();
 
-
+  TextEditingController freeTextCount = TextEditingController();
   TextEditingController name = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController layoutrechts = TextEditingController();
@@ -37,6 +40,17 @@ QuillController quillController = QuillController.basic();
 
   var ipAdress = "".obs;
   var port = 9100.obs;
+
+  void getDataSql() {
+    var connection = Constants().connection;
+    connection.then((value) {
+      value.query('SELECT * FROM products').then((results) {
+        for (var row in results) {
+          print('Name: ${row[1]}, Description: ${row[2]}');
+        }
+      });
+    });
+  }
 
   void getDatas() {
     depo.writeIfNull("firma", "");
@@ -125,6 +139,25 @@ QuillController quillController = QuillController.basic();
     name.clear();
     description.clear();
     layoutrechts.clear();
+  }
+
+  Future<void> addSqlProdukt(Etikett etikett) async {
+    final conn = await Constants().connection;
+    try {
+      await conn.query(
+          'INSERT INTO products (name, description, layoutrechts) VALUES (?, ?, ?)',
+          [etikett.name, etikett.description, etikett.layoutrechts]);
+
+      // İşlem başarılıysa, kullanıcı arayüzünü güncelleyin veya gerekli işlemleri yapın
+      update();
+      Get.back();
+      // name, description, layoutrechts gibi alanları temizleyin
+    } catch (e) {
+      print("Veritabanına ürün eklenirken hata oluştu: $e");
+      Get.snackbar("Fehler", "FehlerCode: $e");
+    } finally {
+      await conn.close();
+    }
   }
 
   void removeProdukt(Etikett etikett) {
@@ -244,6 +277,80 @@ QuillController quillController = QuillController.basic();
     for (int i = 0; i < quantity; i++) {
       socket.write(label);
       await socket.flush();
+    }
+
+    // Bağlantıyı kapat
+    socket.close();
+    print('Printer Disconnected');
+  }
+
+  void printFreeText(String quillJsonString, int quantity) async {
+    printCounter(quantity);
+
+    List<dynamic> quillJson = json.decode(quillJsonString);
+
+    String label = '^XA'; // Etiket başlangıcı
+    label += '^CI28'; // UTF-8 karakter setine geçiş için SBPL komutu
+
+    // Quill JSON verisini işleme
+    for (var item in quillJson) {
+      if (item['insert'] != null) {
+        String text = item['insert'];
+        Map<String, dynamic>? attributes = item['attributes'];
+
+        String textStyle = '^ADN'; // Varsayılan stil
+        if (attributes != null) {
+          if (attributes['bold'] == true) {
+            textStyle = '^ADB'; // Kalın metin için stil
+          }
+          if (attributes['italic'] == true) {
+            textStyle = '^ADI'; // Italik metin için stil
+          }
+        }
+
+        // SBPL metin komutunu oluştur
+        label += '^FO50,50$textStyle^FD$text^FS';
+      }
+    }
+
+    label += '^XZ'; // Etiket sonu
+
+    // TCP soketi oluştur ve yazıcıya bağlan
+    var socket = await Socket.connect(ipAdress.value, port.value);
+    print('Printer Connected');
+
+    try {
+      // Etiketi yazdır
+      for (int i = 0; i < quantity; i++) {
+        socket.write(label);
+        await socket.flush();
+      }
+      Get.dialog(AlertDialog(
+        title: Text("Erfolgreich"),
+        content: Text(
+            "Erfolgreich gedruckt $quantity mal $ipAdress.value $port.value "),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text("OK"))
+        ],
+      ));
+      freeTextCount.clear();
+    } catch (e) {
+      print(e);
+      Get.dialog(AlertDialog(
+        title: Text("Fehler"),
+        content: Text("Bitte überprüfen Sie die IP-Adresse und Port Fehler $e"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Get.back();
+              },
+              child: Text("OK"))
+        ],
+      ));
     }
 
     // Bağlantıyı kapat

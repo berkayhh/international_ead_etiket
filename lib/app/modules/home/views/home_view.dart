@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:international_ead_etiket/app/modules/home/views/add_product.dart';
@@ -83,7 +85,124 @@ class HomeView extends GetView<HomeController> {
                                                     controller.quantity.text));
                                           },
                                           child: const Text('Drucken'),
-                                        )
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.all(8),
+                                          color: Colors.grey[200],
+                                          height: Get.height * 0.5,
+                                          width: Get.width * 0.8,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // Sol taraf
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${controller.produkte[index].name}',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            20, // Başlık için büyük font boyutu
+                                                        fontWeight: FontWeight
+                                                            .bold, // Kalın
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    Text(
+                                                      '${controller.produkte[index].description}',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            14, // Açıklama için orta font boyutu
+                                                      ),
+                                                    ),
+                                                    RichText(
+                                                      text: TextSpan(
+                                                        text: 'Firma: ',
+                                                        style: const TextStyle(
+                                                          fontSize:
+                                                              14, // Firma için orta font boyutu
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        children: [
+                                                          TextSpan(
+                                                            text:
+                                                                '${controller.firma}',
+                                                            style:
+                                                                const TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal,
+                                                              color:
+                                                                  Colors.black,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+
+                                                    // Diğer sol taraf içerikleri...
+                                                  ],
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              // Sağ taraf
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${controller.produkte[index].layoutrechts}',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            14, // Sağ taraf metni için orta font boyutu
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                    // Örnek ek içerikler
+                                                    Text(
+                                                      'Firma: ${controller.firma}',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            12, // Firma için font boyutu
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      'Adresse: ${controller.firmaAdresse}',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            12, // Adres için font boyutu
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      'Layout: ${controller.bottomlayout1}',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            12, // Layout için font boyutu
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      'Weitere Info: ${controller.bottomlayout2}',
+                                                      style: const TextStyle(
+                                                        fontSize:
+                                                            12, // Diğer bilgiler için font boyutu
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   );
